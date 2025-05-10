@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flux-Schnell | Free Unlimited AI Image Generation</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .loading-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+        .api-param {
+            background-color: #e2e8f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation Bar at Top -->
+    <header class="bg-base-100 shadow-sm sticky top-0 z-50">
+        <div class="navbar container mx-auto px-4 py-3">
+            <div class="flex-1">
+                <a href="/" class="btn btn-ghost normal-case text-xl">
+                    <i class="fas fa-magic text-primary"></i>
+                    <span class="ml-2 font-semibold">Flux-Schnell</span>
+                </a>
+            </div>
+            <div class="flex-none">
+                <ul class="menu menu-horizontal px-1 hidden md:flex">
+                    <li><a href="#generator"><i class="fas fa-image mr-1"></i> Generator</a></li>
+                    <li><a href="#api-docs"><i class="fas fa-code mr-1"></i> API Docs</a></li>
+                    <li><a href="#features"><i class="fas fa-star mr-1"></i> Features</a></li>
+                    <li><a href="#faq"><i class="fas fa-question-circle mr-1"></i> FAQ</a></li>
+                </ul>
+                <div class="dropdown dropdown-end ml-2">
+                    <label tabindex="0" class="btn btn-ghost md:hidden">
+                        <i class="fas fa-bars"></i>
+                    </label>
+                    <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 mt-2">
+                        <li><a href="#generator"><i class="fas fa-image mr-2"></i>Generator</a></li>
+                        <li><a href="#api-docs"><i class="fas fa-code mr-2"></i>API Docs</a></li>
+                        <li><a href="#features"><i class="fas fa-star mr-2"></i>Features</a></li>
+                        <li><a href="#faq"><i class="fas fa-question-circle mr-2"></i>FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero min-h-screen flex items-center justify-center py-20 bg-gradient-to-b from-base-100 to-gray-50">
+        <div class="hero-content text-center">
+            <div class="max-w-4xl">
+                <h1 class="text-5xl font-bold mb-6">
+                    <span class="text-gray-800">Generate AI Images</span>
+                    <br>
+                    <span class="text-primary">Free & Unlimited</span>
+                </h1>
+                <p class="text-gray-600 text-lg mb-8">
+                    Create stunning images instantly with Flux-Schnell's powerful AI. No sign-ups, no payments - just pure creativity.
+                </p>
+                <div class="flex flex-col md:flex-row gap-4 justify-center">
+                    <a href="#generator" class="btn btn-primary px-8">
+                        <i class="fas fa-magic mr-2"></i>
+                        Start Generating Now
+                    </a>
+                    <a href="#api-docs" class="btn btn-outline btn-neutral">
+                        <i class="fas fa-code mr-2"></i>
+                        View API Documentation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-12 bg-base-100">
+        <div class="container mx-auto px-4">
+            <div class="stats stats-vertical lg:stats-horizontal shadow w-full bg-gray-50">
+                <div class="stat">
+                    <div class="stat-figure text-primary">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="stat-title">Total Images Generated</div>
+                    <div class="stat-value text-primary" id="total-images">0</div>
+                    <div class="stat-desc">Since launch</div>
+                </div>
+                
+                <div class="stat">
+                    <div class="stat-figure text-secondary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-title">Total Users</div>
+                    <div class="stat-value text-secondary" id="total-users">0</div>
+                    <div class="stat-desc">Unique visitors</div>
+                </div>
+                
+                <div class="stat">
+                    <div class="stat-figure text-accent">
+                        <i class="fas fa-stopwatch"></i>
+                    </div>
+                    <div class="stat-title">Avg. Generation Time</div>
+                    <div class="stat-value text-accent" id="avg-time">0s</div>
+                    <div class="stat-desc">Last generation</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Image Generator Section -->
+    <section id="generator" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">AI Image Generator</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Describe what you want to see and let our AI create it for you.</p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="flex-1">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text flex items-center">
+                                    <i class="fas fa-edit mr-2"></i>
+                                    Prompt Description
+                                </span>
+                            </label>
+                            <textarea id="prompt-input" class="textarea textarea-bordered h-40" placeholder="A futuristic cityscape at sunset with flying cars..."></textarea>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text flex items-center">
+                                        <i class="fas fa-cube mr-2"></i>
+                                        Model
+                                    </span>
+                                </label>
+                                <select id="model-input" class="select select-bordered w-full">
+                                    <option value="flux-schnell" selected>Flux-Schnell</option>
+                                    <option value="flux-real">Flux-Real</option>
+                                    <option value="flux-anime">Flux-Anime</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text flex items-center">
+                                        <i class="fas fa-sliders-h mr-2"></i>
+                                        Guidance Scale
+                                    </span>
+                                </label>
+                                <input id="guidance-input" type="range" min="1" max="20" value="8.5" step="0.1" class="range range-primary" />
+                                <div class="w-full flex justify-between text-xs px-2">
+                                    <span>1</span>
+                                    <span id="guidance-value">8.5</span>
+                                    <span>20</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text flex items-center">
+                                        <i class="fas fa-tachometer-alt mr-2"></i>
+                                        Strength
+                                    </span>
+                                </label>
+                                <input id="strength-input" type="range" min="0.1" max="2" value="1.4" step="0.1" class="range range-secondary" />
+                                <div class="w-full flex justify-between text-xs px-2">
+                                    <span>0.1</span>
+                                    <span id="strength-value">1.4</span>
+                                    <span>2</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button id="generate-btn" class="btn btn-primary mt-6 w-full">
+                            <i class="fas fa-magic mr-2"></i>
+                            Generate Image
+                        </button>
+                    </div>
+                    
+                    <div class="flex-1">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text flex items-center">
+                                    <i class="fas fa-image mr-2"></i>
+                                    Generated Image
+                                </span>
+                            </label>
+                            <div id="image-container" class="bg-base-300 rounded-box border-2 border-dashed border-gray-400 flex items-center justify-center h-80 relative">
+                                <div id="image-placeholder" class="text-center p-6">
+                                    <i class="fas fa-image text-gray-400 text-4xl mb-4"></i>
+                                    <p class="text-gray-500">Your generated image will appear here</p>
+                                </div>
+                                <div id="image-result" class="hidden w-full h-full"></div>
+                                <div id="loading-container" class="loading-container hidden">
+                                    <i class="fas fa-spinner fa-spin text-4xl text-primary mb-3"></i>
+                                    <p class="text-gray-700">Generating your image...</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between mt-4">
+                            <button id="download-btn" class="btn btn-outline btn-sm" disabled>
+                                <i class="fas fa-download mr-2"></i>
+                                Download
+                            </button>
+                            <button id="copy-btn" class="btn btn-outline btn-sm" disabled>
+                                <i class="fas fa-copy mr-2"></i>
+                                Copy Link
+                            </button>
+                            <button id="share-btn" class="btn btn-outline btn-sm" disabled>
+                                <i class="fas fa-share-alt mr-2"></i>
+                                Share
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Documentation Section -->
+    <section id="api-docs" class="py-16 bg-base-100">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">API Documentation</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Integrate Flux-Schnell's image generation into your applications</p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto bg-gray-50 p-8 rounded-lg shadow-sm">
+                <h3 class="text-2xl font-semibold mb-4 text-gray-800">API Endpoints</h3>
+                
+                <div class="mb-8">
+                    <h4 class="text-xl font-medium mb-2 text-gray-700">Image Generation</h4>
+                    <div class="bg-gray-100 p-4 rounded-lg mb-2">
+                        <code class="text-sm">GET https://flux-schnell.hello-kaiiddo.workers.dev/img?prompt={prompt}&model={model}&guidance={guidance}&strength={strength}</code>
+                    </div>
+                    <p class="text-gray-600 mb-4">Generates an image based on the provided parameters.</p>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="table w-full">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Required</th>
+                                    <th>Default</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="api-param">prompt</span></td>
+                                    <td>Yes</td>
+                                    <td>-</td>
+                                    <td>Text description of the image to generate</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="api-param">model</span></td>
+                                    <td>No</td>
+                                    <td>flux-schnell</td>
+                                    <td>Model to use (flux-schnell, flux-real, flux-anime)</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="api-param">guidance</span></td>
+                                    <td>No</td>
+                                    <td>8.5</td>
+                                    <td>How closely the image follows the prompt (1-20)</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="api-param">strength</span></td>
+                                    <td>No</td>
+                                    <td>1.4</td>
+                                    <td>Strength of the generation (0.1-2)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <h4 class="text-xl font-medium mb-2 text-gray-700">Example Request</h4>
+                    <pre class="mb-4">fetch('https://flux-schnell.hello-kaiiddo.workers.dev/img?prompt=Photo%20of%20an%20extremely%20cute%20alien%20fish%20swimming%20an%20alien%20habitable%20underwater%20planet&model=flux-schnell&guidance=8.5&strength=1.4')
+  .then(response => response.blob())
+  .then(blob => {
+    const imageUrl = URL.createObjectURL(blob);
+    // Use the image URL
+  });</pre>
+                </div>
+                
+                <div class="mb-8">
+                    <h4 class="text-xl font-medium mb-2 text-gray-700">Response</h4>
+                    <p class="text-gray-600 mb-2">Returns the generated image directly as binary data with content-type <span class="api-param">image/png</span>.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-xl font-medium mb-2 text-gray-700">API Credits</h4>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="https://t.me/Kaiiddo" target="_blank" class="btn btn-ghost btn-sm">
+                            <i class="fab fa-telegram mr-2"></i> @Kaiiddo (Developer)
+                        </a>
+                        <a href="https://youtube.com/@Kaiiddo" target="_blank" class="btn btn-ghost btn-sm">
+                            <i class="fab fa-youtube mr-2"></i> YouTube Channel
+                        </a>
+                        <a href="https://t.me/DiscussionxGroup" target="_blank" class="btn btn-ghost btn-sm">
+                            <i class="fab fa-telegram mr-2"></i> Support Group
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Why Choose Flux-Schnell</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">The most powerful free image generation platform</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-base-100 p-6 rounded-lg shadow-sm">
+                    <div class="flex items-center mb-4">
+                        <div class="p-3 rounded-full bg-primary bg-opacity-10 text-primary">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Lightning Fast</h3>
+                    <p class="text-gray-600">Generate high-quality images in seconds with our optimized AI models.</p>
+                </div>
+                
+                <div class="bg-base-100 p-6 rounded-lg shadow-sm">
+                    <div class="flex items-center mb-4">
+                        <div class="p-3 rounded-full bg-secondary bg-opacity-10 text-secondary">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">No Sign-Up</h3>
+                    <p class="text-gray-600">Start generating immediately without creating an account.</p>
+                </div>
+                
+                <div class="bg-base-100 p-6 rounded-lg shadow-sm">
+                    <div class="flex items-center mb-4">
+                        <div class="p-3 rounded-full bg-accent bg-opacity-10 text-accent">
+                            <i class="fas fa-infinity"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Unlimited</h3>
+                    <p class="text-gray-600">No limits on how many images you can create.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-16 bg-base-100">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Frequently Asked Questions</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Common questions about Flux-Schnell</p>
+            </div>
+            
+            <div class="join join-vertical w-full">
+                <div class="collapse collapse-arrow join-item border border-base-300">
+                    <input type="radio" name="my-accordion-4" checked="checked" /> 
+                    <div class="collapse-title text-xl font-medium">
+                        Is this really free with no limits?
+                    </div>
+                    <div class="collapse-content"> 
+                        <p>Yes! Flux-Schnell is completely free with no generation limits or watermarks.</p>
+                    </div>
+                </div>
+                <div class="collapse collapse-arrow join-item border border-base-300">
+                    <input type="radio" name="my-accordion-4" /> 
+                    <div class="collapse-title text-xl font-medium">
+                        Can I use the images commercially?
+                    </div>
+                    <div class="collapse-content"> 
+                        <p>Absolutely. All images generated are free for personal and commercial use.</p>
+                    </div>
+                </div>
+                <div class="collapse collapse-arrow join-item border border-base-300">
+                    <input type="radio" name="my-accordion-4" /> 
+                    <div class="collapse-title text-xl font-medium">
+                        How do I get better results?
+                    </div>
+                    <div class="collapse-content"> 
+                        <p>Use detailed prompts and experiment with the guidance and strength settings.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Professional Footer -->
+    <footer class="footer p-10 bg-neutral text-neutral-content">
+        <aside>
+            <i class="fas fa-magic text-primary text-3xl mb-2"></i>
+            <p class="font-bold text-lg">Flux-Schnell<br>Free Unlimited AI Image Generation</p>
+            <p>© <span id="current-year"></span> Flux-Schnell. All rights reserved.</p>
+        </aside> 
+        <nav>
+            <h6 class="footer-title">Company</h6> 
+            <a class="link link-hover">About</a>
+            <a class="link link-hover">Contact</a>
+            <a class="link link-hover">Privacy policy</a>
+            <a class="link link-hover">Terms of use</a>
+        </nav> 
+        <nav>
+            <h6 class="footer-title">Social</h6> 
+            <div class="grid grid-flow-col gap-4">
+                <a href="https://twitter.com/Kaiiddo" target="_blank" class="tooltip" data-tip="Twitter">
+                    <i class="fab fa-twitter text-xl"></i>
+                </a>
+                <a href="https://youtube.com/@Kaiiddo" target="_blank" class="tooltip" data-tip="YouTube">
+                    <i class="fab fa-youtube text-xl"></i>
+                </a>
+                <a href="https://bsky.app/profile/Kaiiddo" target="_blank" class="tooltip" data-tip="Bluesky">
+                    <i class="fa-brands fa-bluesky text-xl"></i>
+                </a>
+                <a href="https://t.me/Kaiiddo" target="_blank" class="tooltip" data-tip="Telegram">
+                    <i class="fab fa-telegram text-xl"></i>
+                </a>
+            </div>
+        </nav>
+    </footer>
+    
+    <div class="footer footer-center p-4 bg-neutral text-neutral-content border-t border-gray-700">
+        <aside>
+            <p>Made with <i class="fas fa-heart text-red-500"></i> & Developed By Kaiiddo</p>
+        </aside>
+    </div>
+
+    <script>
+        // Set current year in footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Initialize stats
+        let totalImages = 0;
+        let totalUsers = 0;
+        let generationTimes = [];
+        
+        // Update slider values
+        document.getElementById('guidance-input').addEventListener('input', function() {
+            document.getElementById('guidance-value').textContent = this.value;
+        });
+        
+        document.getElementById('strength-input').addEventListener('input', function() {
+            document.getElementById('strength-value').textContent = this.value;
+        });
+        
+        // Simulate user count increment (would be from your analytics in real app)
+        function incrementUserCount() {
+            totalUsers++;
+            document.getElementById('total-users').textContent = totalUsers;
+        }
+        
+        // Image generation
+        document.getElementById('generate-btn').addEventListener('click', async function() {
+            const prompt = document.getElementById('prompt-input').value.trim();
+            const model = document.getElementById('model-input').value;
+            const guidance = document.getElementById('guidance-input').value;
+            const strength = document.getElementById('strength-input').value;
+            
+            if (!prompt) {
+                alert('Please enter a prompt description');
+                return;
+            }
+            
+            // Increment user count on first generation
+            if (totalImages === 0) {
+                incrementUserCount();
+            }
+            
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Generating...';
+            
+            // Show loading state
+            const imageContainer = document.getElementById('image-container');
+            const imagePlaceholder = document.getElementById('image-placeholder');
+            const imageResult = document.getElementById('image-result');
+            const loadingContainer = document.getElementById('loading-container');
+            
+            imagePlaceholder.classList.add('hidden');
+            imageResult.classList.add('hidden');
+            loadingContainer.classList.remove('hidden');
+            
+            // Start timer
+            const startTime = Date.now();
+            
+            try {
+                const apiUrl = `https://flux-schnell.hello-kaiiddo.workers.dev/img?prompt=${encodeURIComponent(prompt)}&model=${model}&guidance=${guidance}&strength=${strength}`;
+                
+                // Debug: Log the request URL
+                console.log('Making request to:', apiUrl);
+                console.log('Request parameters:', {
+                    prompt,
+                    model,
+                    guidance,
+                    strength
+                });
+                
+                const response = await fetch(apiUrl);
+                
+                // Debug: Log response status
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`Generation failed with status ${response.status}`);
+                }
+                
+                const blob = await response.blob();
+                const imageUrl = URL.createObjectURL(blob);
+                
+                // Debug: Log successful generation
+                console.log('Image generated successfully:', imageUrl);
+                
+                // Calculate generation time
+                const endTime = Date.now();
+                const generationTime = (endTime - startTime) / 1000;
+                generationTimes.push(generationTime);
+                
+                // Update stats
+                totalImages++;
+                document.getElementById('total-images').textContent = totalImages;
+                
+                const avgTime = generationTimes.reduce((a, b) => a + b, 0) / generationTimes.length;
+                document.getElementById('avg-time').textContent = `${avgTime.toFixed(1)}s`;
+                
+                // Display image
+                imageResult.innerHTML = `<img src="${imageUrl}" alt="Generated image" class="w-full h-full object-contain rounded-box" />`;
+                loadingContainer.classList.add('hidden');
+                imageResult.classList.remove('hidden');
+                
+                // Enable download buttons
+                document.getElementById('download-btn').disabled = false;
+                document.getElementById('copy-btn').disabled = false;
+                document.getElementById('share-btn').disabled = false;
+                
+                // Set up download
+                document.getElementById('download-btn').onclick = function() {
+                    const a = document.createElement('a');
+                    a.href = imageUrl;
+                    a.download = `flux-schnell-${Date.now()}.png`;
+                    a.click();
+                };
+                
+                // Set up copy link
+                document.getElementById('copy-btn').onclick = function() {
+                    navigator.clipboard.writeText(imageUrl);
+                    alert('Image URL copied to clipboard!');
+                };
+                
+                // Set up share
+                document.getElementById('share-btn').onclick = async function() {
+                    try {
+                        await navigator.share({
+                            title: 'Flux-Schnell AI Image',
+                            text: `Check out this AI image I created with Flux-Schnell: ${prompt}`,
+                            url: imageUrl
+                        });
+                    } catch (err) {
+                        console.log('Share failed:', err);
+                    }
+                };
+                
+            } catch (error) {
+                console.error('Error:', error);
+                loadingContainer.classList.add('hidden');
+                imagePlaceholder.classList.remove('hidden');
+                alert('Image generation failed. Please check console for details and try again.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-magic mr-2"></i> Generate Image';
+            }
+        });
+    </script>
+</body>
+</html>
