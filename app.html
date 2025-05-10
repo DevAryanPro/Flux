@@ -595,6 +595,39 @@
                 btn.innerHTML = '<i class="fas fa-magic mr-2"></i> Generate Image';
             }
         });
+
+    // Disable right-click, F12, Ctrl+Shift+I, etc.
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+  // Block F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  if (e.key === 'F12' || 
+      (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+      (e.ctrlKey && e.shiftKey && e.key === 'J') || 
+      (e.ctrlKey && e.key === 'U') ||
+      (e.ctrlKey && e.key === 'S')) {
+    e.preventDefault();
+    alert('Developer tools are disabled for privacy reasons');
+  }
+});
+
+// Attempt to block console opening (won't work in all browsers)
+(function() {
+  let isOpened = false;
+  function checkConsole() {
+    const before = new Date().getTime();
+    debugger;
+    const after = new Date().getTime();
+    if (after - before > 100) {
+      if (!isOpened) {
+        alert('Console debugging is not allowed');
+        isOpened = true;
+      }
+      window.location.reload();
+    }
+  }
+  setInterval(checkConsole, 1000);
+})();
+        
     </script>
 </body>
 </html>
